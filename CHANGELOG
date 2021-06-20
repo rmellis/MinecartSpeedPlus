@@ -1,0 +1,75 @@
+1.0:
+Initial release
+
+1.1:
+Changed constant multiplier to a variable one(commands)
+Changed "load" and "unload" messages
+
+1.1.1:
+Added more feedback on commands
+
+1.2:
+Sign-commands
+fly-signs
+
+1.2.1:
+Removed forgotten debug message spamming console
+
+1.3:
+Cmd uses now permissions
+
+1.3.1:
+Fixed nofly bug
+
+1.4:
+Full permissions support
+
+1.5:
+New event API
+1.2.3 -support
+
+1.6:
+1.2.5 -support
+
+1.6.2:
+Building against 1.4.6
+
+1.6.3:
+Building against 1.5.2
+Fixing version numbers
+
+13.2
+Migration to SpigotAPI
+
+14.0
+VehicleMoveEvent fix
+
+15.0.3	
+compatibility update for MC1.15+
+
+16.0.3	
+stability update
+fixed CraftBukkit ignoring the global speed.
+
+17.0.2	
+Added support for 1.17, updated mapping and fixed "[msp] fly".
+Only tested on Spigot as other forks are not available yet.
+Backwards compatibility untested, but should work fine,
+ please note there is currently cap at speed 4 when dynamically 
+ changing speed due to some strange minecart behavior that could 
+ occur when moving faster in versions grater than 1.13, if you 
+ need faster speed and have an older server version you can 
+ simply use an older version of this resource.
+
+17.0.3	
+This is just a quick update to fix a mistake i made in spelling.
+
+
+18.0.1	
+ Migrated from the SpigotAPI to the PaperAPI and replaced all spigot 
+ packages with their bukkit equivalents for maximum compatibility
+Changed the blue text to a more modern style as requested by a multiple users
+forced a global minecart speed limit of 4 (forgot to cap global in the last update)
+it is now possible to use decimal numbers for a more specific speed
+Fully compatible with Bukkit, Spigot, Paper and all it's forks
+    [ https://imgur.com/a/4T1SLcZ ]

@@ -1,0 +1,30 @@
+name: MinecartSpeedPlus
+main: fi.dy.esav.Minecart_speedplus.Minecart_speedplus
+version: 18.0.1
+commands:
+   msp:
+      description: Sets new minecart speed limit.
+      usage: |
+         "/msp <multiplier>"   #limet = 4
+permissions:
+    msp.*:
+        description: Gives access to all msp features
+        default: op
+        children:
+            msp.cmd: true
+            msp.signs: true
+    msp.cmd:
+        description: Allows you to use speed cmd
+        default: op
+    msp.signs:
+        description: Allows you to create both signs   #limet = 4
+        default: op
+        children:
+            msp.signs.speed: true
+            msp.signs.fly: true
+    msp.signs.speed:
+        description: Allows you to create speed-sings   #limet = 4
+        default: op
+    msp.signs.fly:
+        description: Allows you to create fly-signs
+        default: op
