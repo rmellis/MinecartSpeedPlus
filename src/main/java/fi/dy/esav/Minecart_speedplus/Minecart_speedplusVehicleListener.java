@@ -31,8 +31,8 @@ public class Minecart_speedplusVehicleListener implements Listener {
 	Logger log = Logger.getLogger("Minecraft");
 
 	boolean error;
-	
-	Vector flyingmod = new Vector(10 , 0.01 , 10);
+
+	Vector flyingmod = new Vector(10, 0.01, 10);
 	Vector noflyingmod = new Vector(1, 1, 1);
 
 	public Minecart_speedplusVehicleListener(Minecart_speedplus instance) {
@@ -48,7 +48,7 @@ public class Minecart_speedplusVehicleListener implements Listener {
 
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleMove(VehicleMoveEvent event) {
 
@@ -66,12 +66,11 @@ public class Minecart_speedplusVehicleListener implements Listener {
 						blocky = carty + ymod;
 						blockz = cartz + zmod;
 						block = cart.getWorld().getBlockAt(blockx, blocky,
-								blockz);
-						blockid = cart.getWorld().getBlockTypeIdAt(blockx,
-								blocky, blockz);
+						                                   blockz);
+						Material mat = cart.getWorld().getBlockAt(blockx, blocky, blockz).getType();
 
 						if (blockid == Material.WALL_SIGN.getId()
-						    || blockid == Material.SIGN_POST.getId()) {
+						        || blockid == Material.SIGN_POST.getId()) {
 							Sign sign = (Sign) block.getState();
 							String[] text = sign.getLines();
 
@@ -79,11 +78,11 @@ public class Minecart_speedplusVehicleListener implements Listener {
 
 								if (text[1].equalsIgnoreCase("fly")) {
 									cart.setFlyingVelocityMod(flyingmod);
-									
+
 								} else if (text[1].equalsIgnoreCase("nofly")) {
-									
+
 									cart.setFlyingVelocityMod(noflyingmod);
-									
+
 								} else {
 
 									error = false;
@@ -106,7 +105,7 @@ public class Minecart_speedplusVehicleListener implements Listener {
 											cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
 
 										} else {
-											
+
 											sign.setLine(2, "  ERROR");
 											sign.setLine(3, "WRONG VALUE");
 											sign.update();
