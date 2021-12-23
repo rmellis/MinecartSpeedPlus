@@ -15,6 +15,26 @@ import org.bukkit.util.Vector;
 
 public class Minecart_speedplusVehicleListener implements Listener {
 
+	public static boolean isSign(Material m) {
+		switch (m) {
+		case OAK_SIGN:
+		case OAK_WALL_SIGN:
+		case DARK_OAK_SIGN:
+		case DARK_OAK_WALL_SIGN:
+		case ACACIA_SIGN:
+		case ACACIA_WALL_SIGN:
+		case BIRCH_SIGN:
+		case BIRCH_WALL_SIGN:
+		case JUNGLE_SIGN:
+		case JUNGLE_WALL_SIGN:
+		case SPRUCE_SIGN:
+		case SPRUCE_WALL_SIGN:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	int[] xmodifier = { -1, 0, 1 };
 	int[] ymodifier = { -2, -1, 0, 1, 2 };
 	int[] zmodifier = { -1, 0, 1 };
@@ -69,8 +89,7 @@ public class Minecart_speedplusVehicleListener implements Listener {
 						                                   blockz);
 						Material mat = cart.getWorld().getBlockAt(blockx, blocky, blockz).getType();
 
-						if (blockid == Material.WALL_SIGN.getId()
-						        || blockid == Material.SIGN_POST.getId()) {
+						if (this.isSign(mat)) {
 							Sign sign = (Sign) block.getState();
 							String[] text = sign.getLines();
 
