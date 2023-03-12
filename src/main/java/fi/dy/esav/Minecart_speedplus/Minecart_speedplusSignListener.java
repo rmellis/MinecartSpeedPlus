@@ -16,11 +16,11 @@ public class Minecart_speedplusSignListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onSignChange(SignChangeEvent e) {
-        if (!(e.line(0) instanceof TextComponent text0)) { return; }
+        if (!(e.line(0) instanceof final TextComponent text0)) { return; }
         var line0 = text0.content();
         if (!line0.equalsIgnoreCase("[msp]")) { return; }
 
-        if (!(e.line(1) instanceof TextComponent text1)) { return; }
+        if (!(e.line(1) instanceof final TextComponent text1)) { return; }
         var line1 = text1.content();
 
         if (line1.equalsIgnoreCase("fly") || line1.equalsIgnoreCase("nofly")) {
