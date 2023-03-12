@@ -14,7 +14,7 @@ public class Minecart_speedplus extends JavaPlugin {
     static double speedmultiplier = 1.25D;
     private final Minecart_speedplusVehicleListener VehicleListener = new Minecart_speedplusVehicleListener(this);
     private final Minecart_speedplusSignListener SignListener = new Minecart_speedplusSignListener(this);
-    Logger log = Logger.getLogger("Minecraft");
+    final Logger log = Logger.getLogger("Minecraft");
     boolean result;
     double multiplier;
 
@@ -46,16 +46,14 @@ public class Minecart_speedplus extends JavaPlugin {
             return false;
         }
 
-        if (sender instanceof Player player) {
-            if (!player.hasPermission("msp.cmd")) {
-                player.sendMessage("You don't have permission to do that");
-                return true;
-            }
+        if ((sender instanceof final Player player) && !player.hasPermission("msp.cmd")) {
+            player.sendMessage("You don't have permission to do that");
+            return true;
         }
 
         try {
             this.multiplier = Double.parseDouble(args[0]);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             sender.sendMessage(ChatColor.RED + "speed must be between 0.0 and 4.0");
             return false;
         }
