@@ -1,9 +1,8 @@
 package fi.dy.esav.Minecart_speedplus;
 
-import java.util.logging.Logger;
-
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
@@ -13,115 +12,86 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public class Minecart_speedplusVehicleListener implements Listener {
+    public static Minecart_speedplus plugin;
+    @SuppressWarnings("UnstableApiUsage")
+    private final Set<Material> signs = EnumSet.of(Material.OAK_SIGN, Material.SPRUCE_SIGN, Material.BIRCH_SIGN, Material.JUNGLE_SIGN, Material.ACACIA_SIGN, Material.DARK_OAK_SIGN, Material.MANGROVE_SIGN, Material.BAMBOO_SIGN, Material.CRIMSON_SIGN, Material.WARPED_SIGN);
+    final int[] xmodifier = {-1, 0, 1};
+    final int[] ymodifier = {-2, -1, 0, 1, 2};
+    final int[] zmodifier = {-1, 0, 1};
+    final Vector flyingmod = new Vector(10, 0.01, 10);
+    final Vector noflyingmod = new Vector(1, 1, 1);
 
-	int[] xmodifier = { -1, 0, 1 };
-	int[] ymodifier = { -2, -1, 0, 1, 2 };
-	int[] zmodifier = { -1, 0, 1 };
+    public Minecart_speedplusVehicleListener(Minecart_speedplus instance) {
+        plugin = instance;
+    }
 
-	int cartx, carty, cartz;
-	int blockx, blocky, blockz;
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onVehicleCreate(VehicleCreateEvent event) {
+        if (event.getVehicle() instanceof Minecart cart) {
+            cart.setMaxSpeed(0.4 * Minecart_speedplus.getSpeedMultiplier());
+        }
+    }
 
-	Block block;
-	int blockid;
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onVehicleMove(VehicleMoveEvent event) {
+        if (!(event.getVehicle() instanceof final Minecart cart)) { return; }
 
-	double line1;
+        for (final int xmod : xmodifier) {
+            for (final int ymod : ymodifier) {
+                for (final int zmod : zmodifier) {
+                    final var cartx = cart.getLocation().getBlockX();
+                    final var carty = cart.getLocation().getBlockY();
+                    final var cartz = cart.getLocation().getBlockZ();
+                    final var blockx = cartx + xmod;
+                    final var blocky = carty + ymod;
+                    final var blockz = cartz + zmod;
+                    final var block = cart.getWorld().getBlockAt(blockx, blocky, blockz);
+                    final var isSign = signs.contains(block.getType());
+                    if (!isSign) { continue; }
 
-	public static Minecart_speedplus plugin;
-	Logger log = Logger.getLogger("Minecraft");
+                    final Sign sign = (Sign) block.getState();
+                    final String[] text = sign.lines().stream()
+                            .filter(c -> c instanceof TextComponent)
+                            .map(t -> ((TextComponent) t).content())
+                            .toArray(String[]::new);
 
-	boolean error;
-	
-	Vector flyingmod = new Vector(10 , 0.01 , 10);
-	Vector noflyingmod = new Vector(1, 1, 1);
+                    final var text0 = text[0];
+                    if (!text0.equalsIgnoreCase("[msp]")) { continue; }
 
-	public Minecart_speedplusVehicleListener(Minecart_speedplus instance) {
-		plugin = instance;
-	}
+                    final var text1 = text[1];
+                    if (text1.equalsIgnoreCase("fly")) {
+                        cart.setFlyingVelocityMod(flyingmod);
+                        return;
+                    }
 
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onVehicleCreate(VehicleCreateEvent event) {
-		if (event.getVehicle() instanceof Minecart) {
+                    if (text1.equalsIgnoreCase("nofly")) {
+                        cart.setFlyingVelocityMod(noflyingmod);
+                        return;
+                    }
 
-			Minecart cart = (Minecart) event.getVehicle();
-			cart.setMaxSpeed(0.4 * Minecart_speedplus.getSpeedMultiplier());
+                    var speed = 0D;
+                    try {
+                        speed = Double.parseDouble(text1);
+                    } catch (Exception e) {
+                        sign.line(2, Component.text("  ERROR"));
+                        sign.line(3, Component.text("WRONG VALUE"));
+                        sign.update();
+                        continue;
+                    }
 
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onVehicleMove(VehicleMoveEvent event) {
-
-		if (event.getVehicle() instanceof Minecart) {
-
-			Minecart cart = (Minecart) event.getVehicle();
-			for (int xmod : xmodifier) {
-				for (int ymod : ymodifier) {
-					for (int zmod : zmodifier) {
-
-						cartx = cart.getLocation().getBlockX();
-						carty = cart.getLocation().getBlockY();
-						cartz = cart.getLocation().getBlockZ();
-						blockx = cartx + xmod;
-						blocky = carty + ymod;
-						blockz = cartz + zmod;
-						block = cart.getWorld().getBlockAt(blockx, blocky,
-								blockz);
-						blockid = cart.getWorld().getBlockTypeIdAt(blockx,
-								blocky, blockz);
-
-						if (blockid == Material.WALL_SIGN.getId()
-						    || blockid == Material.SIGN_POST.getId()) {
-							Sign sign = (Sign) block.getState();
-							String[] text = sign.getLines();
-
-							if (text[0].equalsIgnoreCase("[msp]")) {
-
-								if (text[1].equalsIgnoreCase("fly")) {
-									cart.setFlyingVelocityMod(flyingmod);
-									
-								} else if (text[1].equalsIgnoreCase("nofly")) {
-									
-									cart.setFlyingVelocityMod(noflyingmod);
-									
-								} else {
-
-									error = false;
-									try {
-
-										line1 = Double.parseDouble(text[1]);
-
-									} catch (Exception e) {
-
-										sign.setLine(2, "  ERROR");
-										sign.setLine(3, "WRONG VALUE");
-										sign.update();
-										error = true;
-
-									}
-									if (!error) {
-
-										if (0 < line1 & line1 <= 50) {
-
-											cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
-
-										} else {
-											
-											sign.setLine(2, "  ERROR");
-											sign.setLine(3, "WRONG VALUE");
-											sign.update();
-										}
-									}
-								}
-							}
-
-						}
-
-					}
-				}
-			}
-
-		}
-	}
-
+                    if (0 < speed && speed <= 50) {
+                        cart.setMaxSpeed(0.4D * speed);
+                    } else {
+                        sign.line(2, Component.text("  ERROR"));
+                        sign.line(3, Component.text("WRONG VALUE"));
+                        sign.update();
+                    }
+                }
+            }
+        }
+    }
 }
