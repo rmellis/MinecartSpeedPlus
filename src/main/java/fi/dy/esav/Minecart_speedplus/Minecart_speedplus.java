@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,6 +16,7 @@ public class Minecart_speedplus extends JavaPlugin {
     Logger log = Logger.getLogger("Minecraft");
     boolean result;
     double multiplier;
+
     public static double getSpeedMultiplier() {
         return speedmultiplier;
     }
@@ -41,27 +41,30 @@ public class Minecart_speedplus extends JavaPlugin {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("msp")) {
-            if (sender instanceof Player player) {
-              if (!player.hasPermission("msp.cmd")) {
-                    player.sendMessage("You don't have permission to do that");
-                    return true;
-                }
-            }
-            try {
-                this.multiplier = Double.parseDouble(args[0]);
-            } catch (Exception e) {
-                sender.sendMessage(ChatColor.YELLOW + "should be a number");
-                return false;
-            }
-            this.result = setSpeedMultiplier(this.multiplier);
-            if (this.result) {
-                sender.sendMessage(ChatColor.YELLOW + "multiplier for new Minecarts set to: " + this.multiplier);
+        if (!cmd.getName().equalsIgnoreCase("msp")) {
+            return false;
+        }
+
+        if (sender instanceof Player player) {
+            if (!player.hasPermission("msp.cmd")) {
+                player.sendMessage("You don't have permission to do that");
                 return true;
             }
-            sender.sendMessage(ChatColor.YELLOW + "can not be set to zero and must be below");
+        }
+
+        try {
+            this.multiplier = Double.parseDouble(args[0]);
+        } catch (Exception e) {
+            sender.sendMessage(ChatColor.RED + "speed must be between 0.0 and 4.0");
+            return false;
+        }
+
+        this.result = setSpeedMultiplier(this.multiplier);
+        if (this.result) {
+            sender.sendMessage(ChatColor.YELLOW + "multiplier for new mine carts set to: " + this.multiplier);
             return true;
         }
-        return false;
+        sender.sendMessage(ChatColor.YELLOW + "speed must be between 0.0 and 4.0");
+        return true;
     }
 }
