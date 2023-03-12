@@ -22,11 +22,6 @@ public class Minecart_speedplusVehicleListener implements Listener {
     int[] xmodifier = {-1, 0, 1};
     int[] ymodifier = {-2, -1, 0, 1, 2};
     int[] zmodifier = {-1, 0, 1};
-    int cartx, carty, cartz;
-    int blockx, blocky, blockz;
-    Block block;
-    double line1;
-    boolean error;
     Vector flyingmod = new Vector(10, 0.01, 10);
     Vector noflyingmod = new Vector(1, 1, 1);
 
@@ -48,45 +43,45 @@ public class Minecart_speedplusVehicleListener implements Listener {
         for (int xmod : xmodifier) {
             for (int ymod : ymodifier) {
                 for (int zmod : zmodifier) {
-                    cartx = cart.getLocation().getBlockX();
-                    carty = cart.getLocation().getBlockY();
-                    cartz = cart.getLocation().getBlockZ();
-                    blockx = cartx + xmod;
-                    blocky = carty + ymod;
-                    blockz = cartz + zmod;
-                    block = cart.getWorld().getBlockAt(blockx, blocky, blockz);
+                    final var cartx = cart.getLocation().getBlockX();
+                    final var carty = cart.getLocation().getBlockY();
+                    final var cartz = cart.getLocation().getBlockZ();
+                    final var blockx = cartx + xmod;
+                    final var blocky = carty + ymod;
+                    final var blockz = cartz + zmod;
+                    final var isSign = signs.contains(cart.getWorld().getBlockAt(blockx, blocky, blockz).getType());
+                    if (!isSign) { continue; }
 
-                    var isSign = signs.contains(cart.getWorld().getBlockAt(blockx, blocky, blockz).getType());
-                    if (isSign) {
-                        Sign sign = (Sign) block.getState();
-                        String[] text = sign.lines().stream()
-                                .filter( c -> c instanceof TextComponent)
-                                .map(t -> ((TextComponent) t).content())
-                                .toArray(String[]::new);
+                    final var block = cart.getWorld().getBlockAt(blockx, blocky, blockz);
+                    Sign sign = (Sign) block.getState();
+                    String[] text = sign.lines().stream()
+                            .filter(c -> c instanceof TextComponent)
+                            .map(t -> ((TextComponent) t).content())
+                            .toArray(String[]::new);
 
-                        if (text[0].equalsIgnoreCase("[msp]")) {
-                            if (text[1].equalsIgnoreCase("fly")) {
-                                cart.setFlyingVelocityMod(flyingmod);
-                            } else if (text[1].equalsIgnoreCase("nofly")) {
-                                cart.setFlyingVelocityMod(noflyingmod);
-                            } else {
-                                error = false;
-                                try {
-                                    line1 = Double.parseDouble(text[1]);
-                                } catch (Exception e) {
+                    if (text[0].equalsIgnoreCase("[msp]")) {
+                        if (text[1].equalsIgnoreCase("fly")) {
+                            cart.setFlyingVelocityMod(flyingmod);
+                        } else if (text[1].equalsIgnoreCase("nofly")) {
+                            cart.setFlyingVelocityMod(noflyingmod);
+                        } else {
+                            var line1 = 0D;
+                            var error = false;
+                            try {
+                                line1 = Double.parseDouble(text[1]);
+                            } catch (Exception e) {
+                                sign.line(2, Component.text("  ERROR"));
+                                sign.line(3, Component.text("WRONG VALUE"));
+                                sign.update();
+                                error = true;
+                            }
+                            if (!error) {
+                                if (0 < line1 & line1 <= 50) {
+                                    cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
+                                } else {
                                     sign.line(2, Component.text("  ERROR"));
                                     sign.line(3, Component.text("WRONG VALUE"));
                                     sign.update();
-                                    error = true;
-                                }
-                                if (!error) {
-                                    if (0 < line1 & line1 <= 50) {
-                                        cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
-                                    } else {
-                                        sign.line(2, Component.text("  ERROR"));
-                                        sign.line(3, Component.text("WRONG VALUE"));
-                                        sign.update();
-                                    }
                                 }
                             }
                         }
