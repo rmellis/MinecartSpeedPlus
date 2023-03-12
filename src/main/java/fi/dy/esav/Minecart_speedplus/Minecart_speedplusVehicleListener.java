@@ -80,37 +80,24 @@ public class Minecart_speedplusVehicleListener implements Listener {
                             String[] text = sign.getLines();
 
                             if (text[0].equalsIgnoreCase("[msp]")) {
-
                                 if (text[1].equalsIgnoreCase("fly")) {
                                     cart.setFlyingVelocityMod(flyingmod);
-
                                 } else if (text[1].equalsIgnoreCase("nofly")) {
-
                                     cart.setFlyingVelocityMod(noflyingmod);
-
                                 } else {
-
                                     error = false;
                                     try {
-
                                         line1 = Double.parseDouble(text[1]);
-
                                     } catch (Exception e) {
-
                                         sign.setLine(2, "  ERROR");
                                         sign.setLine(3, "WRONG VALUE");
                                         sign.update();
                                         error = true;
-
                                     }
                                     if (!error) {
-
                                         if (0 < line1 & line1 <= 50) {
-
                                             cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
-
                                         } else {
-
                                             sign.setLine(2, "  ERROR");
                                             sign.setLine(3, "WRONG VALUE");
                                             sign.update();

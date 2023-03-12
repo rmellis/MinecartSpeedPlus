@@ -10,7 +10,6 @@ public class Minecart_speedplusSignListener implements Listener {
     Minecart_speedplus plugin;
 
     public Minecart_speedplusSignListener(Minecart_speedplus instance) {
-
         plugin = instance;
     }
 
@@ -38,12 +37,8 @@ public class Minecart_speedplusSignListener implements Listener {
                 if (!(e.getPlayer().hasPermission("msp.signs.speed"))) {
                     e.setLine(0, "NO PERMS");
                 }
-
             }
-
-
         }
-
     }
 
 

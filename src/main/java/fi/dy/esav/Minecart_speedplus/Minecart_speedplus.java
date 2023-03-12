@@ -13,13 +13,10 @@ import java.util.logging.Logger;
 public class Minecart_speedplus extends JavaPlugin {
     static double speedmultiplier = 1.25D;
     private final Minecart_speedplusVehicleListener VehicleListener = new Minecart_speedplusVehicleListener(this);
-
     private final Minecart_speedplusSignListener SignListener = new Minecart_speedplusSignListener(this);
     Logger log = Logger.getLogger("Minecraft");
     boolean result;
-
     double multiplier;
-
     public static double getSpeedMultiplier() {
         return speedmultiplier;
     }
