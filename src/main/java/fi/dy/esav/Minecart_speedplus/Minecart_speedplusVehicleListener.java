@@ -3,7 +3,6 @@ package fi.dy.esav.Minecart_speedplus;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
@@ -49,46 +48,47 @@ public class Minecart_speedplusVehicleListener implements Listener {
                     final var blockx = cartx + xmod;
                     final var blocky = carty + ymod;
                     final var blockz = cartz + zmod;
-                    final var isSign = signs.contains(cart.getWorld().getBlockAt(blockx, blocky, blockz).getType());
+                    final var block = cart.getWorld().getBlockAt(blockx, blocky, blockz);
+                    final var isSign = signs.contains(block.getType());
                     if (!isSign) { continue; }
 
-                    final var block = cart.getWorld().getBlockAt(blockx, blocky, blockz);
                     Sign sign = (Sign) block.getState();
                     String[] text = sign.lines().stream()
                             .filter(c -> c instanceof TextComponent)
                             .map(t -> ((TextComponent) t).content())
                             .toArray(String[]::new);
 
-                    if (text[0].equalsIgnoreCase("[msp]")) {
-                        if (text[1].equalsIgnoreCase("fly")) {
-                            cart.setFlyingVelocityMod(flyingmod);
-                        } else if (text[1].equalsIgnoreCase("nofly")) {
-                            cart.setFlyingVelocityMod(noflyingmod);
-                        } else {
-                            var line1 = 0D;
-                            var error = false;
-                            try {
-                                line1 = Double.parseDouble(text[1]);
-                            } catch (Exception e) {
-                                sign.line(2, Component.text("  ERROR"));
-                                sign.line(3, Component.text("WRONG VALUE"));
-                                sign.update();
-                                error = true;
-                            }
-                            if (!error) {
-                                if (0 < line1 & line1 <= 50) {
-                                    cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
-                                } else {
-                                    sign.line(2, Component.text("  ERROR"));
-                                    sign.line(3, Component.text("WRONG VALUE"));
-                                    sign.update();
-                                }
-                            }
-                        }
+                    if (!text[0].equalsIgnoreCase("[msp]")) { continue; }
+
+                    if (text[1].equalsIgnoreCase("fly")) {
+                        cart.setFlyingVelocityMod(flyingmod);
+                        return;
+                    }
+
+                    if (text[1].equalsIgnoreCase("nofly")) {
+                        cart.setFlyingVelocityMod(noflyingmod);
+                        return;
+                    }
+
+                    var speed = 0D;
+                    try {
+                        speed = Double.parseDouble(text[1]);
+                    } catch (Exception e) {
+                        sign.line(2, Component.text("  ERROR"));
+                        sign.line(3, Component.text("WRONG VALUE"));
+                        sign.update();
+                        continue;
+                    }
+
+                    if (0 < speed && speed <= 50) {
+                        cart.setMaxSpeed(0.4D * speed);
+                    } else {
+                        sign.line(2, Component.text("  ERROR"));
+                        sign.line(3, Component.text("WRONG VALUE"));
+                        sign.update();
                     }
                 }
             }
         }
     }
 }
-
