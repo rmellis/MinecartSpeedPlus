@@ -1,9 +1,5 @@
 package fi.dy.esav.Minecart_speedplus;
 
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -15,122 +11,121 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.logging.Logger;
+
 public class Minecart_speedplusVehicleListener implements Listener {
-	private Set<Material> signs = EnumSet.of(Material.OAK_SIGN,
-		Material.SPRUCE_SIGN,
-		Material.BIRCH_SIGN,
-		Material.JUNGLE_SIGN,
-		Material.ACACIA_SIGN,
-		Material.DARK_OAK_SIGN,
-		Material.MANGROVE_SIGN,
-		Material.BAMBOO_SIGN,
-		Material.CRIMSON_SIGN,
-		Material.WARPED_SIGN);
-	int[] xmodifier = { -1, 0, 1 };
-	int[] ymodifier = { -2, -1, 0, 1, 2 };
-	int[] zmodifier = { -1, 0, 1 };
+    public static Minecart_speedplus plugin;
+    int[] xmodifier = {-1, 0, 1};
+    int[] ymodifier = {-2, -1, 0, 1, 2};
+    int[] zmodifier = {-1, 0, 1};
 
-	int cartx, carty, cartz;
-	int blockx, blocky, blockz;
+    int cartx, carty, cartz;
+    int blockx, blocky, blockz;
 
-	Block block;
-	int blockid;
+    Block block;
+    int blockid;
 
-	double line1;
+    double line1;
+    Logger log = Logger.getLogger("Minecraft");
+    boolean error;
+    Vector flyingmod = new Vector(10, 0.01, 10);
+    Vector noflyingmod = new Vector(1, 1, 1);
+    private final Set<Material> signs = EnumSet.of(Material.OAK_SIGN,
+            Material.SPRUCE_SIGN,
+            Material.BIRCH_SIGN,
+            Material.JUNGLE_SIGN,
+            Material.ACACIA_SIGN,
+            Material.DARK_OAK_SIGN,
+            Material.MANGROVE_SIGN,
+            Material.BAMBOO_SIGN,
+            Material.CRIMSON_SIGN,
+            Material.WARPED_SIGN);
 
-	public static Minecart_speedplus plugin;
-	Logger log = Logger.getLogger("Minecraft");
+    public Minecart_speedplusVehicleListener(Minecart_speedplus instance) {
+        plugin = instance;
+    }
 
-	boolean error;
-	
-	Vector flyingmod = new Vector(10 , 0.01 , 10);
-	Vector noflyingmod = new Vector(1, 1, 1);
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onVehicleCreate(VehicleCreateEvent event) {
+        if (event.getVehicle() instanceof Minecart cart) {
 
-	public Minecart_speedplusVehicleListener(Minecart_speedplus instance) {
-		plugin = instance;
-	}
+            cart.setMaxSpeed(0.4 * Minecart_speedplus.getSpeedMultiplier());
 
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onVehicleCreate(VehicleCreateEvent event) {
-		if (event.getVehicle() instanceof Minecart) {
+        }
+    }
 
-			Minecart cart = (Minecart) event.getVehicle();
-			cart.setMaxSpeed(0.4 * Minecart_speedplus.getSpeedMultiplier());
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onVehicleMove(VehicleMoveEvent event) {
 
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onVehicleMove(VehicleMoveEvent event) {
+        if (event.getVehicle() instanceof Minecart cart) {
 
-		if (event.getVehicle() instanceof Minecart) {
+            for (int xmod : xmodifier) {
+                for (int ymod : ymodifier) {
+                    for (int zmod : zmodifier) {
 
-			Minecart cart = (Minecart) event.getVehicle();
-			for (int xmod : xmodifier) {
-				for (int ymod : ymodifier) {
-					for (int zmod : zmodifier) {
+                        cartx = cart.getLocation().getBlockX();
+                        carty = cart.getLocation().getBlockY();
+                        cartz = cart.getLocation().getBlockZ();
+                        blockx = cartx + xmod;
+                        blocky = carty + ymod;
+                        blockz = cartz + zmod;
+                        block = cart.getWorld().getBlockAt(blockx, blocky,
+                                blockz);
 
-						cartx = cart.getLocation().getBlockX();
-						carty = cart.getLocation().getBlockY();
-						cartz = cart.getLocation().getBlockZ();
-						blockx = cartx + xmod;
-						blocky = carty + ymod;
-						blockz = cartz + zmod;
-						block = cart.getWorld().getBlockAt(blockx, blocky,
-								blockz);
+                        var isSign = signs.contains(cart.getWorld().getBlockAt(blockx, blocky, blockz).getType());
+                        if (isSign) {
+                            Sign sign = (Sign) block.getState();
+                            String[] text = sign.getLines();
 
-						var isSign = signs.contains(cart.getWorld().getBlockAt(blockx, blocky, blockz).getType());
-						if (isSign) {
-							Sign sign = (Sign) block.getState();
-							String[] text = sign.getLines();
+                            if (text[0].equalsIgnoreCase("[msp]")) {
 
-							if (text[0].equalsIgnoreCase("[msp]")) {
+                                if (text[1].equalsIgnoreCase("fly")) {
+                                    cart.setFlyingVelocityMod(flyingmod);
 
-								if (text[1].equalsIgnoreCase("fly")) {
-									cart.setFlyingVelocityMod(flyingmod);
-									
-								} else if (text[1].equalsIgnoreCase("nofly")) {
-									
-									cart.setFlyingVelocityMod(noflyingmod);
-									
-								} else {
+                                } else if (text[1].equalsIgnoreCase("nofly")) {
 
-									error = false;
-									try {
+                                    cart.setFlyingVelocityMod(noflyingmod);
 
-										line1 = Double.parseDouble(text[1]);
+                                } else {
 
-									} catch (Exception e) {
+                                    error = false;
+                                    try {
 
-										sign.setLine(2, "  ERROR");
-										sign.setLine(3, "WRONG VALUE");
-										sign.update();
-										error = true;
+                                        line1 = Double.parseDouble(text[1]);
 
-									}
-									if (!error) {
+                                    } catch (Exception e) {
 
-										if (0 < line1 & line1 <= 50) {
+                                        sign.setLine(2, "  ERROR");
+                                        sign.setLine(3, "WRONG VALUE");
+                                        sign.update();
+                                        error = true;
 
-											cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
+                                    }
+                                    if (!error) {
 
-										} else {
-											
-											sign.setLine(2, "  ERROR");
-											sign.setLine(3, "WRONG VALUE");
-											sign.update();
-										}
-									}
-								}
-							}
+                                        if (0 < line1 & line1 <= 50) {
 
-						}
+                                            cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
 
-					}
-				}
-			}
+                                        } else {
 
-		}
-	}
+                                            sign.setLine(2, "  ERROR");
+                                            sign.setLine(3, "WRONG VALUE");
+                                            sign.update();
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
 
 }
