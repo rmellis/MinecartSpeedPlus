@@ -11,20 +11,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Logger;
 
 public class Minecart_speedplus extends JavaPlugin {
-    static double speedmultiplier = 1.25D;
+    static double speedMultiplier = 1.25D;
     private final Minecart_speedplusVehicleListener VehicleListener = new Minecart_speedplusVehicleListener(this);
     private final Minecart_speedplusSignListener SignListener = new Minecart_speedplusSignListener(this);
     final Logger log = Logger.getLogger("Minecraft");
-    boolean result;
-    double multiplier;
 
     public static double getSpeedMultiplier() {
-        return speedmultiplier;
+        return speedMultiplier;
     }
 
-    public boolean setSpeedMultiplier(double multiplier) {
+    public boolean setSpeedMultiplier(final double multiplier) {
         if ((((0.0D < multiplier) ? 1 : 0) & ((multiplier <= 4.0D) ? 1 : 0)) != 0) {
-            speedmultiplier = multiplier;
+            speedMultiplier = multiplier;
             return true;
         }
         return false;
@@ -51,16 +49,17 @@ public class Minecart_speedplus extends JavaPlugin {
             return true;
         }
 
+        var multiplier = 0D;
         try {
-            this.multiplier = Double.parseDouble(args[0]);
+            multiplier = Double.parseDouble(args[0]);
         } catch (final Exception e) {
             sender.sendMessage(ChatColor.RED + "speed must be between 0.0 and 4.0");
             return false;
         }
 
-        this.result = setSpeedMultiplier(this.multiplier);
-        if (this.result) {
-            sender.sendMessage(ChatColor.YELLOW + "multiplier for new mine carts set to: " + this.multiplier);
+        var success = setSpeedMultiplier(multiplier);
+        if (success) {
+            sender.sendMessage(ChatColor.YELLOW + "multiplier for new mine carts set to: " + multiplier);
             return true;
         }
         sender.sendMessage(ChatColor.YELLOW + "speed must be between 0.0 and 4.0");
