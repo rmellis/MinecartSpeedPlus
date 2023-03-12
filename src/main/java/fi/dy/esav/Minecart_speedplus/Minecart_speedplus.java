@@ -62,7 +62,7 @@ public class Minecart_speedplus extends JavaPlugin {
       } 
       this.result = setSpeedMultiplier(this.multiplier);
       if (this.result) {
-        sender.sendMessage(ChatColor.YELLOW + "multiplier for new Minecarts set to: + this.multiplier);
+        sender.sendMessage(ChatColor.YELLOW + "multiplier for new Minecarts set to: " + this.multiplier);
         return true;
       } 
       sender.sendMessage(ChatColor.YELLOW + "can not be set to zero and must be below");

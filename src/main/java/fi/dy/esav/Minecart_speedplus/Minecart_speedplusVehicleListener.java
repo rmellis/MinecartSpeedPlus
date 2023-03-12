@@ -1,5 +1,7 @@
 package fi.dy.esav.Minecart_speedplus;
 
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
@@ -14,7 +16,16 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 
 public class Minecart_speedplusVehicleListener implements Listener {
-
+	private Set<Material> signs = EnumSet.of(Material.OAK_SIGN,
+		Material.SPRUCE_SIGN,
+		Material.BIRCH_SIGN,
+		Material.JUNGLE_SIGN,
+		Material.ACACIA_SIGN,
+		Material.DARK_OAK_SIGN,
+		Material.MANGROVE_SIGN,
+		Material.BAMBOO_SIGN,
+		Material.CRIMSON_SIGN,
+		Material.WARPED_SIGN);
 	int[] xmodifier = { -1, 0, 1 };
 	int[] ymodifier = { -2, -1, 0, 1, 2 };
 	int[] zmodifier = { -1, 0, 1 };
@@ -67,11 +78,9 @@ public class Minecart_speedplusVehicleListener implements Listener {
 						blockz = cartz + zmod;
 						block = cart.getWorld().getBlockAt(blockx, blocky,
 								blockz);
-						blockid = cart.getWorld().getBlockTypeIdAt(blockx,
-								blocky, blockz);
 
-						if (blockid == Material.WALL_SIGN.getId()
-						    || blockid == Material.SIGN_POST.getId()) {
+						var isSign = signs.contains(cart.getWorld().getBlockAt(blockx, blocky, blockz).getType());
+						if (isSign) {
 							Sign sign = (Sign) block.getState();
 							String[] text = sign.getLines();
 
