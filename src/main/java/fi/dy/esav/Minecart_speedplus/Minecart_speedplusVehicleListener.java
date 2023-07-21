@@ -1,7 +1,7 @@
 package fi.dy.esav.Minecart_speedplus;
 
 import java.util.logging.Logger;
-
+import org.bukkit.Tag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -14,6 +14,10 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 
 public class Minecart_speedplusVehicleListener implements Listener {
+
+	public static boolean isSign(Material m) {
+		return Tag.SIGNS.isTagged(m);
+	}
 
 	int[] xmodifier = { -1, 0, 1 };
 	int[] ymodifier = { -2, -1, 0, 1, 2 };
@@ -31,8 +35,8 @@ public class Minecart_speedplusVehicleListener implements Listener {
 	Logger log = Logger.getLogger("Minecraft");
 
 	boolean error;
-	
-	Vector flyingmod = new Vector(10 , 0.01 , 10);
+
+	Vector flyingmod = new Vector(10, 0.01, 10);
 	Vector noflyingmod = new Vector(1, 1, 1);
 
 	public Minecart_speedplusVehicleListener(Minecart_speedplus instance) {
@@ -48,7 +52,7 @@ public class Minecart_speedplusVehicleListener implements Listener {
 
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onVehicleMove(VehicleMoveEvent event) {
 
@@ -66,12 +70,10 @@ public class Minecart_speedplusVehicleListener implements Listener {
 						blocky = carty + ymod;
 						blockz = cartz + zmod;
 						block = cart.getWorld().getBlockAt(blockx, blocky,
-								blockz);
-						blockid = cart.getWorld().getBlockTypeIdAt(blockx,
-								blocky, blockz);
+						                                   blockz);
+						Material mat = cart.getWorld().getBlockAt(blockx, blocky, blockz).getType();
 
-						if (blockid == Material.WALL_SIGN.getId()
-						    || blockid == Material.SIGN_POST.getId()) {
+						if (this.isSign(mat)) {
 							Sign sign = (Sign) block.getState();
 							String[] text = sign.getLines();
 
@@ -79,11 +81,11 @@ public class Minecart_speedplusVehicleListener implements Listener {
 
 								if (text[1].equalsIgnoreCase("fly")) {
 									cart.setFlyingVelocityMod(flyingmod);
-									
+
 								} else if (text[1].equalsIgnoreCase("nofly")) {
-									
+
 									cart.setFlyingVelocityMod(noflyingmod);
-									
+
 								} else {
 
 									error = false;
@@ -106,7 +108,7 @@ public class Minecart_speedplusVehicleListener implements Listener {
 											cart.setMaxSpeed(0.4D * Double.parseDouble(text[1]));
 
 										} else {
-											
+
 											sign.setLine(2, "  ERROR");
 											sign.setLine(3, "WRONG VALUE");
 											sign.update();

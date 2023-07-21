@@ -1,6 +1,7 @@
 name: MinecartSpeedPlus
 main: fi.dy.esav.Minecart_speedplus.Minecart_speedplus
 version: 18.0.1
+api-version: 1.15
 commands:
    msp:
       description: Sets new minecart speed limit.
